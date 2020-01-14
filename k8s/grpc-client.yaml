@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: grpc-client
+  labels:
+    name: grpc-client
+spec:
+  replicas: 2
+  selector:
+    name: grpc-client
+  template:
+    metadata:
+      labels:
+        name: grpc-client
+    spec:
+      containers:
+      - name: worker
+        image: suecool/grpc-client
+        env:
+        - name: SERVER
+          value: grpc-server
+        ports:
+        - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-client
+  labels:
+    name: grpc-client
+spec:
+  type: NodePort
+  ports:
+    # the port that this service should serve on
+  - port: 8081
+    nodePort: 30080
+  selector:
+    name: grpc-client
